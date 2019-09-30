@@ -33,7 +33,7 @@ Class {
 	#category : #GameOfLife
 }
 
-{ #category : #'as yet unclassified' }
+{ #category : #'instance creation' }
 GOLGame >> cellsPerSide [
 	"number of life cell per side, default with a square"
 
@@ -41,13 +41,13 @@ GOLGame >> cellsPerSide [
 ]
 
 { #category : #rules }
-GOLGame >> getCellValue: row column: column [
+GOLGame >> getCellValueAt: i at: j [
 	"Gets the value of the specified cell"
 
-	^ row < 1 | (row > self cellsPerSide) | (column > self cellsPerSide)
-		| (column < 1)
+	^ i < 1 | (i > self cellsPerSide) | (j > self cellsPerSide)
+		| (j < 1)
 		ifTrue: [ 0 ]
-		ifFalse: [ (cells at: row at: column) isOn
+		ifFalse: [ (cells at: i at: j) isOn
 				ifTrue: [ 1 ]
 				ifFalse: [ 0 ] ]
 ]
@@ -55,20 +55,20 @@ GOLGame >> getCellValue: row column: column [
 { #category : #accessing }
 GOLGame >> getNeighborsAt: i at: j [
 	| topLeft top topRight left right bottomLeft bottomRight bottom |
-	topLeft := self getCellValue: i - 1 column: j - 1.
-	top := self getCellValue: i - 1 column: j.
-	left := self getCellValue: i column: j - 1.
-	right := self getCellValue: i column: j + 1.
-	topRight := self getCellValue: i - 1 column: j + 1.
-	bottomRight := self getCellValue: i + 1 column: j + 1.
-	bottom := self getCellValue: i + 1 column: j.
-	bottomLeft := self getCellValue: i + 1 column: j - 1.
+	topLeft := self getCellValueAt: i - 1 at: j - 1.
+	top := self getCellValueAt: i - 1 at: j.
+	left := self getCellValueAt: i at: j - 1.
+	right := self getCellValueAt: i at: j + 1.
+	topRight := self getCellValueAt: i - 1 at: j + 1.
+	bottomRight := self getCellValueAt: i + 1 at: j + 1.
+	bottom := self getCellValueAt: i + 1 at: j.
+	bottomLeft := self getCellValueAt: i + 1 at: j - 1.
 	^ topLeft + top + left + right + topRight + bottomRight + bottom
 		+ bottomLeft
 ]
 
 { #category : #rules }
-GOLGame >> getNextGenerationFor: i column: j [
+GOLGame >> getNextGenerationAt: i at: j [
 	"Verifies the Game Of Life rules"
 
 	| neighbors cell |
@@ -95,7 +95,7 @@ GOLGame >> initialize [
 	cells := Array2D new: n tabulate: [ :i :j | self newCellAt: i at: j ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'instance creation' }
 GOLGame >> newCellAt: i at: j [
 	"Create a cell for position (i,j) and add it to my on-screen
 representation at the appropriate screen position. Answer the
@@ -109,12 +109,20 @@ new cell"
 	^ c
 ]
 
+{ #category : #'as yet unclassified' }
+GOLGame >> patternBlinker [
+	(cells at: 2 at: 2) turnOn.
+	(cells at: 2 at: 3) turnOn.
+	(cells at: 2 at: 4) turnOn.
+	(cells at: 2 at: 5) turnOn
+]
+
 { #category : #'model - stepping' }
 GOLGame >> step [
 	"Verifies the rules of the Game Of Life"
 
 	| nextGeneration |
-	nextGeneration := cells indicesCollect: [ :i :j | self getNextGenerationFor: i column: j].
+	nextGeneration := cells indicesCollect: [ :i :j | self getNextGenerationAt: i at: j].
 	cells := nextGeneration.
 	self changed
 ]
