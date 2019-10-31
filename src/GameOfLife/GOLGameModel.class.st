@@ -22,7 +22,7 @@ GOLGameModel >> game: anArray [
 	game := anArray
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #private }
 GOLGameModel >> getCellValueAt: i at: j [
 	"Gets the value of the specified cell"
 
@@ -34,7 +34,7 @@ GOLGameModel >> getCellValueAt: i at: j [
 	^ alive
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #private }
 GOLGameModel >> getNeighborsAt: i at: j [ 
 	| topLeft top topRight left right bottomLeft bottomRight bottom |
 	topLeft := self getCellValueAt: i - 1 at: j - 1.
@@ -49,14 +49,14 @@ GOLGameModel >> getNeighborsAt: i at: j [
 		+ bottomLeft
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'model protocol' }
 GOLGameModel >> getNextGeneration [
 	| nextGeneration |
 	nextGeneration := game  indicesCollect:  [ :i :j | self getNextGenerationAt: i at: j ].
 	game := nextGeneration.
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'model protocol' }
 GOLGameModel >> getNextGenerationAt: i at: j [
 	| neighbors cell |
 	neighbors := self getNeighborsAt: i at: j.
@@ -70,12 +70,12 @@ GOLGameModel >> getNextGenerationAt: i at: j [
 	^ GOLGameCellModel dead
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'model protocol' }
 GOLGameModel >> isAliveAt: i at: j [ 
 	^(game at: i at:j) isAlive
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #initializing }
 GOLGameModel >> rows: rowNumber columns: columnNumber [
 	game := Array2D
 		rows: rowNumber
@@ -83,7 +83,7 @@ GOLGameModel >> rows: rowNumber columns: columnNumber [
 		tabulate: [ :i :j | GOLGameCellModel dead ]
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'model protocol' }
 GOLGameModel >> turnAliveAt: i at: j [ 
 	game at: i at:j put: GOLGameCellModel alive.
 ]

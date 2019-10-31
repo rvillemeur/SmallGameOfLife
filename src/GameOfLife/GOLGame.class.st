@@ -14,13 +14,19 @@ The initial pattern constitutes the seed of the system. The first generation is 
 
 |game|
 
-game := GOLGame new  openInWorld.
-game stopStepping.
-game enableMouseInteraction.
+game := GOLGame rows: 3 columns: 3.
+game patternBlinker.
+game openInWindow 
 
-GameOfLifeMorph allInstances last startStepping.
+or 
 
-GameOfLifeMorph allInstances last delete.
+|game|
+
+game := GOLGame rows: 9 columns: 16.
+game patternPentadecathlon .
+game openInWindow 
+
+
 
 Idea taken from blog post: http://langexplr.blogspot.com/2015/08/game-of-life-and-pharo.html, with code updated to match Pharo 7.0
 "
@@ -28,71 +34,15 @@ Class {
 	#name : #GOLGame,
 	#superclass : #BorderedMorph,
 	#instVars : [
-		'cells'
+		'cells',
+		'display'
 	],
 	#category : #GameOfLife
 }
 
 { #category : #'instance creation' }
-GOLGame >> cellsPerSide [
-	"number of life cell per side, default with a square"
-
-	^ 10
-]
-
-{ #category : #rules }
-GOLGame >> getCellValueAt: i at: j [
-	"Gets the value of the specified cell"
-
-	^ i < 1 | (i > self cellsPerSide) | (j > self cellsPerSide)
-		| (j < 1)
-		ifTrue: [ 0 ]
-		ifFalse: [ (cells at: i at: j) isOn
-				ifTrue: [ 1 ]
-				ifFalse: [ 0 ] ]
-]
-
-{ #category : #accessing }
-GOLGame >> getNeighborsAt: i at: j [
-	| topLeft top topRight left right bottomLeft bottomRight bottom |
-	topLeft := self getCellValueAt: i - 1 at: j - 1.
-	top := self getCellValueAt: i - 1 at: j.
-	left := self getCellValueAt: i at: j - 1.
-	right := self getCellValueAt: i at: j + 1.
-	topRight := self getCellValueAt: i - 1 at: j + 1.
-	bottomRight := self getCellValueAt: i + 1 at: j + 1.
-	bottom := self getCellValueAt: i + 1 at: j.
-	bottomLeft := self getCellValueAt: i + 1 at: j - 1.
-	^ topLeft + top + left + right + topRight + bottomRight + bottom
-		+ bottomLeft
-]
-
-{ #category : #rules }
-GOLGame >> getNextGenerationAt: i at: j [
-	"Verifies the Game Of Life rules"
-
-	| neighbors cell |
-	cell := cells at: i at: j.
-	neighbors := self getNeighborsAt: i at: j.
-	cell isOn
-		ifTrue: [ neighbors < 2 | (neighbors > 3)
-				ifTrue: [ cell turnOff ] ]
-		ifFalse: [ neighbors = 3
-				ifTrue: [ cell turnOn ] ].
-	^ cell
-]
-
-{ #category : #initialization }
-GOLGame >> initialize [
-	| sampleCell width height n |
-	super initialize.
-	n := self cellsPerSide.
-	sampleCell := GOLCell new.
-	width := sampleCell width.
-	height := sampleCell height.
-	self
-		bounds: (5 @ 5 extent: (width * n) @ (height * n) + (2 * self borderWidth)).
-	cells := Array2D new: n tabulate: [ :i :j | self newCellAt: i at: j ]
+GOLGame class >> rows: rowNumber columns: columnNumber [ 
+	^self new rows: rowNumber columns: columnNumber.
 ]
 
 { #category : #'instance creation' }
@@ -109,25 +59,65 @@ new cell"
 	^ c
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #'accessing pattern' }
 GOLGame >> patternBlinker [
-	(cells at: 2 at: 2) turnOn.
-	(cells at: 2 at: 3) turnOn.
-	(cells at: 2 at: 4) turnOn.
-	(cells at: 2 at: 5) turnOn
+"require at least a 3x3 game array"
+	cells turnAliveAt: 1 at: 2.
+	cells turnAliveAt: 2 at: 2.
+	cells turnAliveAt: 3 at: 2.
+]
+
+{ #category : #'accessing pattern' }
+GOLGame >> patternPentadecathlon [
+"require at least a 9x16 game array"
+	cells turnAliveAt: 4 at: 6.
+	cells turnAliveAt: 4 at: 11.
+	
+	cells turnAliveAt: 5 at: 4.
+	cells turnAliveAt: 5 at: 5.
+	
+	cells turnAliveAt: 5 at: 7.
+	cells turnAliveAt: 5 at: 8.
+	cells turnAliveAt: 5 at: 9.
+	cells turnAliveAt: 5 at: 10.
+	
+	cells turnAliveAt: 5 at: 12.
+	cells turnAliveAt: 5 at: 13.
+	
+	cells turnAliveAt: 6 at: 6.
+	cells turnAliveAt: 6 at: 11.
+]
+
+{ #category : #'instance creation' }
+GOLGame >> rows: rowNumber columns: columnNumber [
+	| sampleCell width height |
+	sampleCell := GOLCell new.
+	width := sampleCell width.
+	height := sampleCell height.
+	self
+		bounds:
+			(5 @ 5
+				extent: (width * rowNumber) @ (height * columnNumber) + (2 * self borderWidth)).
+	display := Array2D rows: rowNumber columns: columnNumber tabulate: [ :i :j | self newCellAt: i at: j ].
+	cells := GOLGameModel  rows: rowNumber columns: columnNumber
 ]
 
 { #category : #'model - stepping' }
 GOLGame >> step [
 	"Verifies the rules of the Game Of Life"
-
-	| nextGeneration |
-	nextGeneration := cells indicesCollect: [ :i :j | self getNextGenerationAt: i at: j].
-	cells := nextGeneration.
+	cells getNextGeneration.
+	display indicesDo: [ :i :j | self updateCellAt: i at: j ].
 	self changed
 ]
 
 { #category : #'model - stepping' }
 GOLGame >> stepTime [
     ^ 500.
+]
+
+{ #category : #accessing }
+GOLGame >> updateCellAt: i at: j [
+	(cells isAliveAt: i at: j)
+		ifTrue: [ (display at: i at: j) turnOn ]
+		ifFalse: [ (display at: i at: j) turnOff ]
 ]
