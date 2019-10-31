@@ -13,5 +13,9 @@ Metacello new
 
 To start it:
 ```smalltalk
-GOLGame new patternBlinker openInWindow 
+|game|
+
+game := GOLGame rows: 9 columns: 16.
+game patternPentadecathlon .
+game openInWindow 
 ```
