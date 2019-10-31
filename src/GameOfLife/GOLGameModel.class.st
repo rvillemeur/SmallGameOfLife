@@ -18,19 +18,20 @@ GOLGameModel >> game [
 ]
 
 { #category : #accessing }
-GOLGameModel >> game: anObject [
-	game := anObject
+GOLGameModel >> game: anArray [
+	game := anArray
 ]
 
 { #category : #'as yet unclassified' }
 GOLGameModel >> getCellValueAt: i at: j [
 	"Gets the value of the specified cell"
-|alive|
-alive := 0.
- i < 1 | (i > game rowCount ) | (j > game columnCount ) | (j < 1)
+
+	| alive |
+	alive := 0.
+	i < 1 | (i > game rowCount) | (j > game columnCount) | (j < 1)
 		ifFalse: [ (game at: i at: j) isAlive
-				ifTrue: [ alive := 1 ]].
-		^alive
+				ifTrue: [ alive := 1 ] ].
+	^ alive
 ]
 
 { #category : #'as yet unclassified' }
@@ -51,23 +52,28 @@ GOLGameModel >> getNeighborsAt: i at: j [
 { #category : #'as yet unclassified' }
 GOLGameModel >> getNextGeneration [
 	| nextGeneration |
-	nextGeneration := Array2D rows: game numberOfRows  columns: game numberOfColumns .
-	nextGeneration indicesDo:  [ :i :j | game getNextGeneration at: i at: j put: (self getNextGenerationAt: i at: j)].
+	nextGeneration := game  indicesCollect:  [ :i :j | self getNextGenerationAt: i at: j ].
 	game := nextGeneration.
 ]
 
 { #category : #'as yet unclassified' }
-GOLGameModel >> getNextGenerationAt: i at: j [ 
-|neighbors cell|
+GOLGameModel >> getNextGenerationAt: i at: j [
+	| neighbors cell |
 	neighbors := self getNeighborsAt: i at: j.
 	cell := game at: i at: j.
 	cell isAlive
-		ifTrue: [ neighbors < 2 | (neighbors > 3)	ifTrue: [ cell turnDead ] ]
-			ifFalse: [ neighbors = 3	ifTrue: [ cell turnAlive  ] ]
+		ifTrue: [ neighbors < 2 | (neighbors > 3)
+				ifTrue: [ ^ GOLGameCellModel dead ]
+				ifFalse: [ ^ GOLGameCellModel alive ] ]
+		ifFalse: [ neighbors = 3
+				ifTrue: [ ^ GOLGameCellModel alive ] ].
+	^ GOLGameCellModel dead
 ]
 
 { #category : #'as yet unclassified' }
-GOLGameModel >> rows: rowNumber columns: columnNumber [ 
-	game := Array2D rows: rowNumber columns: columnNumber.
-	game indicesDo: [:i :j | game at: i at: j put: (GOLGameCellModel new)].
+GOLGameModel >> rows: rowNumber columns: columnNumber [
+	game := Array2D
+		rows: rowNumber
+		columns: columnNumber
+		tabulate: [ :i :j | GOLGameCellModel dead ]
 ]

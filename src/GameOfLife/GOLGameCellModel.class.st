@@ -7,22 +7,27 @@ Class {
 	#category : #GameOfLife
 }
 
-{ #category : #initialization }
+{ #category : #'as yet unclassified' }
+GOLGameCellModel class >> alive [
+	^self new alive: true.
+]
+
+{ #category : #'as yet unclassified' }
+GOLGameCellModel class >> dead [
+	^self new
+]
+
+{ #category : #'accessing - private' }
+GOLGameCellModel >> alive: aBoolean [
+	alive := aBoolean
+]
+
+{ #category : #accessing }
 GOLGameCellModel >> initialize [
 	alive := false
 ]
 
-{ #category : #'as yet unclassified' }
+{ #category : #accessing }
 GOLGameCellModel >> isAlive [
 	^ alive
-]
-
-{ #category : #'as yet unclassified' }
-GOLGameCellModel >> turnAlive [
-	alive := true.
-]
-
-{ #category : #'as yet unclassified' }
-GOLGameCellModel >> turnDead [
-	alive := false.
 ]
