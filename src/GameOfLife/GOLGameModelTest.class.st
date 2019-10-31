@@ -27,14 +27,6 @@ GOLGameModelTest >> testCellAccess [
 ]
 
 { #category : #tests }
-GOLGameModelTest >> testInstanceCreation [
-	| model |
-	model := GOLGameModel rows: 3 columns: 3.
-	self assert: model game numberOfRows equals: 3.
-	self assert: model game numberOfColumns equals: 3.
-]
-
-{ #category : #tests }
 GOLGameModelTest >> testOverPopulation [
 	| model cell|
 	model := GOLGameModel rows: 3 columns: 3.
