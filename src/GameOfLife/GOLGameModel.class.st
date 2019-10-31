@@ -71,9 +71,19 @@ GOLGameModel >> getNextGenerationAt: i at: j [
 ]
 
 { #category : #'as yet unclassified' }
+GOLGameModel >> isAliveAt: i at: j [ 
+	^(game at: i at:j) isAlive
+]
+
+{ #category : #'as yet unclassified' }
 GOLGameModel >> rows: rowNumber columns: columnNumber [
 	game := Array2D
 		rows: rowNumber
 		columns: columnNumber
 		tabulate: [ :i :j | GOLGameCellModel dead ]
+]
+
+{ #category : #'as yet unclassified' }
+GOLGameModel >> turnAliveAt: i at: j [ 
+	game at: i at:j put: GOLGameCellModel alive.
 ]
