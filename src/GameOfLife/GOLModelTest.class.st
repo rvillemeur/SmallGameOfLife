@@ -1,13 +1,16 @@
+"
+I manage the test for Game of Life model rule implementation.
+"
 Class {
-	#name : #GOLGameModelTest,
+	#name : #GOLModelTest,
 	#superclass : #TestCase,
 	#category : #GameOfLife
 }
 
 { #category : #tests }
-GOLGameModelTest >> testBecomeAlive [
+GOLModelTest >> testBecomeAlive [
 	| model cell|
-	model := GOLGameModel rows: 3 columns: 3.
+	model := GOLModel rows: 3 columns: 3.
 	model turnAliveAt: 1 at:1.
 	model turnAliveAt: 1 at:2.
 	model turnAliveAt: 1 at:3.
@@ -16,9 +19,9 @@ GOLGameModelTest >> testBecomeAlive [
 ]
 
 { #category : #tests }
-GOLGameModelTest >> testCellAccess [
+GOLModelTest >> testCellAccess [
 	| model game|
-	model := GOLGameModel rows: 3 columns: 3.
+	model := GOLModel rows: 3 columns: 3.
 	game := model game.
 	game indicesDo: [ :i :j | self assert: (game at: i at:j) equals: false. ].
 	model turnAliveAt: 2 at:2.
@@ -27,9 +30,9 @@ GOLGameModelTest >> testCellAccess [
 ]
 
 { #category : #tests }
-GOLGameModelTest >> testOverPopulation [
+GOLModelTest >> testOverPopulation [
 	| model cell|
-	model := GOLGameModel rows: 3 columns: 3.
+	model := GOLModel rows: 3 columns: 3.
 	model turnAliveAt: 2 at:2.
 	model turnAliveAt: 1 at:1.
 	model turnAliveAt: 1 at:2.
@@ -40,9 +43,9 @@ GOLGameModelTest >> testOverPopulation [
 ]
 
 { #category : #tests }
-GOLGameModelTest >> testPatternBlinker [
+GOLModelTest >> testPatternBlinker [
 	| model|
-	model := GOLGameModel rows: 3 columns: 3.
+	model := GOLModel rows: 3 columns: 3.
 	model turnAliveAt: 1 at:2.
 	model turnAliveAt: 2 at:2.
 	model turnAliveAt: 3 at:2.
@@ -62,9 +65,9 @@ GOLGameModelTest >> testPatternBlinker [
 ]
 
 { #category : #tests }
-GOLGameModelTest >> testUnderPopulation [
+GOLModelTest >> testUnderPopulation [
 	| model cell|
-	model := GOLGameModel rows: 3 columns: 3.
+	model := GOLModel rows: 3 columns: 3.
 	model turnAliveAt: 2 at:2.
 	cell := model getNextGenerationAt: 2 at: 2.
 	self assert: cell equals: false.

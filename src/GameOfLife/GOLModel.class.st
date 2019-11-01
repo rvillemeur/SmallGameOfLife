@@ -1,5 +1,18 @@
+"
+I implement the logic of the game of life
+https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life
+
+The universe of the Game of Life is an infinite, two-dimensional orthogonal grid of square cells, each of which is in one of two possible states, alive or dead, (or populated and unpopulated, respectively). Every cell interacts with its eight neighbours, which are the cells that are horizontally, vertically, or diagonally adjacent. At each step in time, the following transitions occur:
+
+Any live cell with fewer than two live neighbours dies, as if by underpopulation.
+Any live cell with two or three live neighbours lives on to the next generation.
+Any live cell with more than three live neighbours dies, as if by overpopulation.
+Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
+
+The initial pattern constitutes the seed of the system. The first generation is created by applying the above rules simultaneously to every cell in the seed; births and deaths occur simultaneously, and the discrete moment at which this happens is sometimes called a tick. Each generation is a pure function of the preceding one. The rules continue to be applied repeatedly to create further generations.
+"
 Class {
-	#name : #GOLGameModel,
+	#name : #GOLModel,
 	#superclass : #Object,
 	#instVars : [
 		'game'
@@ -8,22 +21,22 @@ Class {
 }
 
 { #category : #'as yet unclassified' }
-GOLGameModel class >> rows: rowNumber columns: columnNumber [ 
+GOLModel class >> rows: rowNumber columns: columnNumber [ 
 	^self new rows: rowNumber columns: columnNumber.
 ]
 
 { #category : #accessing }
-GOLGameModel >> game [
+GOLModel >> game [
 	^ game
 ]
 
 { #category : #accessing }
-GOLGameModel >> game: anArray [
+GOLModel >> game: anArray [
 	game := anArray
 ]
 
 { #category : #private }
-GOLGameModel >> getCellValueAt: i at: j [
+GOLModel >> getCellValueAt: i at: j [
 	"Gets the value of the specified cell"
 
 	| alive |
@@ -34,7 +47,7 @@ GOLGameModel >> getCellValueAt: i at: j [
 ]
 
 { #category : #private }
-GOLGameModel >> getNeighborsAt: i at: j [ 
+GOLModel >> getNeighborsAt: i at: j [ 
 	| topLeft top topRight left right bottomLeft bottomRight bottom |
 	topLeft := self getCellValueAt: i - 1 at: j - 1.
 	top := self getCellValueAt: i - 1 at: j.
@@ -49,14 +62,14 @@ GOLGameModel >> getNeighborsAt: i at: j [
 ]
 
 { #category : #'model protocol' }
-GOLGameModel >> getNextGeneration [
+GOLModel >> getNextGeneration [
 	| nextGeneration |
 	nextGeneration := game  indicesCollect:  [ :i :j | self getNextGenerationAt: i at: j ].
 	game := nextGeneration.
 ]
 
 { #category : #'model protocol' }
-GOLGameModel >> getNextGenerationAt: i at: j [
+GOLModel >> getNextGenerationAt: i at: j [
 	| neighbors cell |
 	neighbors := self getNeighborsAt: i at: j.
 	cell := game at: i at: j.
@@ -69,12 +82,12 @@ GOLGameModel >> getNextGenerationAt: i at: j [
 ]
 
 { #category : #'model protocol' }
-GOLGameModel >> isAliveAt: i at: j [
+GOLModel >> isAliveAt: i at: j [
 	^ game at: i at: j
 ]
 
 { #category : #initializing }
-GOLGameModel >> rows: rowNumber columns: columnNumber [
+GOLModel >> rows: rowNumber columns: columnNumber [
 	game := Array2D
 		rows: rowNumber
 		columns: columnNumber
@@ -82,6 +95,6 @@ GOLGameModel >> rows: rowNumber columns: columnNumber [
 ]
 
 { #category : #'model protocol' }
-GOLGameModel >> turnAliveAt: i at: j [ 
+GOLModel >> turnAliveAt: i at: j [ 
 	game at: i at:j put: true.
 ]

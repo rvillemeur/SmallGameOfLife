@@ -1,41 +1,26 @@
 "
-A first implementation of Conway Game Of Life 
-https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life
-
-The universe of the Game of Life is an infinite, two-dimensional orthogonal grid of square cells, each of which is in one of two possible states, alive or dead, (or populated and unpopulated, respectively). Every cell interacts with its eight neighbours, which are the cells that are horizontally, vertically, or diagonally adjacent. At each step in time, the following transitions occur:
-
-Any live cell with fewer than two live neighbours dies, as if by underpopulation.
-Any live cell with two or three live neighbours lives on to the next generation.
-Any live cell with more than three live neighbours dies, as if by overpopulation.
-Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
-
-The initial pattern constitutes the seed of the system. The first generation is created by applying the above rules simultaneously to every cell in the seed; births and deaths occur simultaneously, and the discrete moment at which this happens is sometimes called a tick. Each generation is a pure function of the preceding one. The rules continue to be applied repeatedly to create further generations.
-
+I reprensent the game of life display, and main entry point of the game.
 
 |game|
-
 game := GOLGame rows: 3 columns: 3.
 game patternBlinker.
-game openInWindow 
+game openInWindow.
 
 or 
 
 |game|
-
-game := GOLGame rows: 9 columns: 16.
-game patternPentadecathlon .
-game openInWindow 
-
-
+game := (GOLGame rows: 9 columns: 16) patternPentadecathlon.
+game openInWindow extent: 300@200; setLabel: 'game of life'.
 
 Idea taken from blog post: http://langexplr.blogspot.com/2015/08/game-of-life-and-pharo.html, with code updated to match Pharo 7.0
 "
 Class {
 	#name : #GOLGame,
-	#superclass : #BorderedMorph,
+	#superclass : #Morph,
 	#instVars : [
 		'cells',
-		'display'
+		'rows',
+		'columns'
 	],
 	#category : #GameOfLife
 }
@@ -45,18 +30,30 @@ GOLGame class >> rows: rowNumber columns: columnNumber [
 	^self new rows: rowNumber columns: columnNumber.
 ]
 
-{ #category : #'instance creation' }
-GOLGame >> newCellAt: i at: j [
-	"Create a cell for position (i,j) and add it to my on-screen
-representation at the appropriate screen position. Answer the
-new cell"
-
-	| c origin |
-	c := GOLCell new.
-	origin := self innerBounds origin.
-	self addMorph: c.
-	c position: ((i - 1) * c width) @ ((j - 1) * c height) + origin.
-	^ c
+{ #category : #drawing }
+GOLGame >> drawOn: canvas [
+	| cellWidth cellHeight cell |
+	cellWidth := self width / columns.
+	cellHeight := self height / rows.
+	1 to: rows do: [ :row | 
+		1 to: columns do: [ :column | 
+			cell := Rectangle
+				left: self bounds left + ((column - 1) * cellWidth)
+				right: self bounds left + ((column - 1) * cellWidth) + cellWidth
+				top: self bounds top + ((row - 1) * cellHeight)
+				bottom: self bounds top + ((row - 1) * cellHeight) + cellHeight.
+			(cells isAliveAt: row at: column)
+				ifTrue: [ canvas
+						frameAndFillRectangle: cell
+						fillColor: Color black
+						borderWidth: 1
+						borderColor: Color black ]
+				ifFalse: [ canvas
+						frameAndFillRectangle: cell
+						fillColor: Color white
+						borderWidth: 1
+						borderColor: Color blue ] ] ].
+	^ self
 ]
 
 { #category : #'accessing pattern' }
@@ -90,34 +87,19 @@ GOLGame >> patternPentadecathlon [
 
 { #category : #'instance creation' }
 GOLGame >> rows: rowNumber columns: columnNumber [
-	| sampleCell width height |
-	sampleCell := GOLCell new.
-	width := sampleCell width.
-	height := sampleCell height.
-	self
-		bounds:
-			(5 @ 5
-				extent: (width * rowNumber) @ (height * columnNumber) + (2 * self borderWidth)).
-	display := Array2D rows: rowNumber columns: columnNumber tabulate: [ :i :j | self newCellAt: i at: j ].
-	cells := GOLGameModel  rows: rowNumber columns: columnNumber
+	rows := rowNumber.
+	columns := columnNumber.
+	cells := GOLModel rows: rowNumber columns: columnNumber.
+	^self.
 ]
 
-{ #category : #'model - stepping' }
+{ #category : #'stepping and presenter' }
 GOLGame >> step [
-	"Verifies the rules of the Game Of Life"
 	cells getNextGeneration.
-	display indicesDo: [ :i :j | self updateCellAt: i at: j ].
 	self changed
 ]
 
-{ #category : #'model - stepping' }
+{ #category : #'stepping and presenter' }
 GOLGame >> stepTime [
     ^ 500.
-]
-
-{ #category : #accessing }
-GOLGame >> updateCellAt: i at: j [
-	(cells isAliveAt: i at: j)
-		ifTrue: [ (display at: i at: j) turnOn ]
-		ifFalse: [ (display at: i at: j) turnOff ]
 ]
