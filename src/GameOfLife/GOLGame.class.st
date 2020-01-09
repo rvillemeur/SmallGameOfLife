@@ -25,6 +25,23 @@ Class {
 	#category : #GameOfLife
 }
 
+{ #category : #examples }
+GOLGame class >> blinker [
+	<example>
+	| game |
+	game := GOLGame rows: 3 columns: 3.
+	game patternBlinker.
+	game openInWindow
+]
+
+{ #category : #examples }
+GOLGame class >> pentathlon [
+<example>
+|game|
+game := (GOLGame rows: 9 columns: 16) patternPentadecathlon.
+game openInWindow extent: 300@200; setLabel: 'game of life'.
+]
+
 { #category : #'instance creation' }
 GOLGame class >> rows: rowNumber columns: columnNumber [ 
 	^self new rows: rowNumber columns: columnNumber.
