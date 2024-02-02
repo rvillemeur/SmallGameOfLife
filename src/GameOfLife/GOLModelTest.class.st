@@ -4,40 +4,25 @@ I manage the test for Game of Life model rule implementation.
 Class {
 	#name : #GOLModelTest,
 	#superclass : #TestCase,
-	#category : #GameOfLife
+	#category : #'GameOfLife-Tests'
 }
 
 { #category : #tests }
 GOLModelTest >> testBecomeAlive [
 	| model cell|
-	model := GOLModel rows: 3 columns: 3.
-	model turnAliveAt: 1 at:1.
-	model turnAliveAt: 1 at:2.
-	model turnAliveAt: 1 at:3.
+	model := GOLModel rows: 3 columns: 3 pattern: #( true false false
+																  true false false
+																  true false false  ).
 	cell := model getNextGenerationAt: 2 at: 2.
 	self assert: cell equals: true.
 ]
 
 { #category : #tests }
-GOLModelTest >> testCellAccess [
-	| model game|
-	model := GOLModel rows: 3 columns: 3.
-	game := model game.
-	game indicesDo: [ :i :j | self assert: (game at: i at:j) equals: false. ].
-	model turnAliveAt: 2 at:2.
-	self assert: (model isAliveAt: 2 at:2) equals: true.
-	self assert: (model isAliveAt: 1 at:1) equals: false.
-]
-
-{ #category : #tests }
 GOLModelTest >> testOverPopulation [
 	| model cell|
-	model := GOLModel rows: 3 columns: 3.
-	model turnAliveAt: 2 at:2.
-	model turnAliveAt: 1 at:1.
-	model turnAliveAt: 1 at:2.
-	model turnAliveAt: 1 at:3.
-	model turnAliveAt: 2 at:1.
+	model := GOLModel rows: 3 columns: 3 pattern: #( true true false
+																  true true false
+																  true false false  ).
 	cell := model getNextGenerationAt: 2 at: 2.
 	self assert: cell equals: false.
 ]
@@ -45,10 +30,9 @@ GOLModelTest >> testOverPopulation [
 { #category : #tests }
 GOLModelTest >> testPatternBlinker [
 	| model|
-	model := GOLModel rows: 3 columns: 3.
-	model turnAliveAt: 1 at:2.
-	model turnAliveAt: 2 at:2.
-	model turnAliveAt: 3 at:2.
+	model := GOLModel rows: 3 columns: 3 pattern: #( false true false
+																  false true false
+																  false true false  ).
 	model getNextGeneration.
 	self assert: (model isAliveAt: 2 at:2) equals: true.
 	self assert: (model isAliveAt: 1 at:2) equals: false.
@@ -67,8 +51,9 @@ GOLModelTest >> testPatternBlinker [
 { #category : #tests }
 GOLModelTest >> testUnderPopulation [
 	| model cell|
-	model := GOLModel rows: 3 columns: 3.
-	model turnAliveAt: 2 at:2.
+	model := GOLModel rows: 3 columns: 3 pattern: #( false false false
+																  false true false
+																  false false false  ).
 	cell := model getNextGenerationAt: 2 at: 2.
 	self assert: cell equals: false.
 ]

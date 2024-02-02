@@ -17,12 +17,12 @@ Class {
 	#instVars : [
 		'game'
 	],
-	#category : #GameOfLife
+	#category : #'GameOfLife-Model'
 }
 
-{ #category : #'as yet unclassified' }
-GOLModel class >> rows: rowNumber columns: columnNumber [ 
-	^self new rows: rowNumber columns: columnNumber.
+{ #category : #creation }
+GOLModel class >> rows: rowNumber columns: columnNumber pattern: aGamePattern [
+	^self new rows: rowNumber columns: columnNumber pattern: aGamePattern 
 ]
 
 { #category : #accessing }
@@ -47,7 +47,8 @@ GOLModel >> getCellValueAt: i at: j [
 ]
 
 { #category : #private }
-GOLModel >> getNeighborsAt: i at: j [ 
+GOLModel >> getNeighborsAt: i at: j [
+
 	| topLeft top topRight left right bottomLeft bottomRight bottom |
 	topLeft := self getCellValueAt: i - 1 at: j - 1.
 	top := self getCellValueAt: i - 1 at: j.
@@ -58,7 +59,7 @@ GOLModel >> getNeighborsAt: i at: j [
 	bottom := self getCellValueAt: i + 1 at: j.
 	bottomLeft := self getCellValueAt: i + 1 at: j - 1.
 	^ topLeft + top + left + right + topRight + bottomRight + bottom
-		+ bottomLeft
+	  + bottomLeft
 ]
 
 { #category : #'model protocol' }
@@ -87,11 +88,11 @@ GOLModel >> isAliveAt: i at: j [
 ]
 
 { #category : #initializing }
-GOLModel >> rows: rowNumber columns: columnNumber [
+GOLModel >> rows: rowNumber columns: columnNumber pattern: aGamePattern [
 	game := Array2D
 		rows: rowNumber
 		columns: columnNumber
-		tabulate: [ :i :j | false ]
+		contents: aGamePattern
 ]
 
 { #category : #'model protocol' }
