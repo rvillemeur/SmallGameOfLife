@@ -56,6 +56,13 @@ GOLGameMorphic >> drawOn: canvas [
 	^ self
 ]
 
+{ #category : #initialization }
+GOLGameMorphic >> initialize [
+
+	super initialize.
+	self extent: 300 @ 200
+]
+
 { #category : #'instance creation' }
 GOLGameMorphic >> rows: rowNumber columns: columnNumber pattern: aGamePattern [
 

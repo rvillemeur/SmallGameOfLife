@@ -15,6 +15,7 @@ GOLGameExample class >> blinker [
 																  false true false
 																  false true false  ).
 	game openInWindow
+	setLabel: 'game of life'
 ]
 
 { #category : #examples }
@@ -33,7 +34,6 @@ GOLGameExample class >> pentathlon [
 																 false false false false false false false false false false false false false false false false).
 	
 	game openInWindow
-		extent: 300 @ 200;
 		setLabel: 'game of life'
 ]
 
