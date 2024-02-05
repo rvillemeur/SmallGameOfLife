@@ -26,14 +26,6 @@ GOLGameBloc >> initGraphics [
 				        c horizontal matchParent.
 				        c vertical matchParent ] ].
 
-	self layout: (BlGridLayout new
-			 rowCount: rows;
-			 columnCount: columns).
-
-	1 to: rows do: [ :row |
-		1 to: columns do: [ :column |
-		self addChild: (grid at: row at: column) ] ].
-
 	animation := BlNumberTransition new
 		             from: 0;
 		             to: 1;
@@ -50,6 +42,14 @@ GOLGameBloc >> initGraphics [
 										              ifTrue: [ Color black ]
 										              ifFalse: [ Color white ]) ] ] ].
 
+	self layout: (BlGridLayout new
+			 rowCount: rows;
+			 columnCount: columns).
+
+	1 to: rows do: [ :row |
+		1 to: columns do: [ :column |
+		self addChild: (grid at: row at: column) ] ].
+
 	self addAnimation: animation
 ]
 
@@ -57,9 +57,11 @@ GOLGameBloc >> initGraphics [
 GOLGameBloc >> initialize [
 
 	super initialize.
-	self constraintsDo: [ :c | c horizontal matchParent. c vertical matchParent  ].
+	self constraintsDo: [ :c |
+		c horizontal matchParent.
+		c vertical matchParent ].
 	self border: (BlBorder paint: Color black width: 3).
-	self openInNewSpace 
+	self openInNewSpace
 ]
 
 { #category : #'instance creation' }
