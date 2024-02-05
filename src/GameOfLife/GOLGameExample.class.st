@@ -37,6 +37,23 @@ GOLGameExample class >> pentathlon [
 		setLabel: 'game of life'
 ]
 
+{ #category : #examples }
+GOLGameExample class >> pentathlonBloc [
+
+	<example>
+	| game |
+	game := GOLGameBloc  rows: 9 columns: 16 pattern: #( false false false false false false false false false false false false false false false false
+																 false false false false false false false false false false false false false false false false
+																 false false false false false false false false false false false false false false false false
+																 false false false false false true  false false false false true  false false false false false
+																 false false false true  true  false true  true  true  true  false true  true  false false false
+																 false false false false false true  false false false false true  false false false false false
+																 false false false false false false false false false false false false false false false false
+																 false false false false false false false false false false false false false false false false
+																 false false false false false false false false false false false false false false false false).
+	
+]
+
 { #category : #'see class side' }
 GOLGameExample >> seeClassSide [ 
 ]
