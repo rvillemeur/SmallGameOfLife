@@ -6,10 +6,10 @@ Class {
 	#name : #GOLGameBloc,
 	#superclass : #Object,
 	#instVars : [
-		'cells',
 		'rows',
 		'columns',
-		'elementList'
+		'model',
+		'cells'
 	],
 	#category : #'GameOfLife-UI'
 }
@@ -28,20 +28,19 @@ GOLGameBloc >> animation [
 		             to: 1;
 		             beInfinite;
 		             duration: 0.6 seconds;
-		             onStepDo: [ :aValue :anElement | self updateElements ].
+		             onStepDo: [ :aValue :anElement | self updateCells ].
 
 	animation addEventHandler: (BlEventHandler
 			 on: BlAnimationLoopDoneEvent
-			 do: [ :anEvent | cells getNextGeneration ]).
+			 do: [ :anEvent | model getNextGeneration ]).
 
 	^ animation
 ]
 
 { #category : #initialization }
-GOLGameBloc >> initDisplay [
+GOLGameBloc >> display [
 
 	| container |
-	self initElements.
 
 	container := BlElement new
 		             constraintsDo: [ :c |
@@ -53,16 +52,16 @@ GOLGameBloc >> initDisplay [
 				              columnCount: columns);
 		             addAnimation: self animation.
 
-	elementList indicesDo: [ :row :column |
-		container addChild: (elementList at: row at: column) ].
+	cells indicesDo: [ :row :column |
+		container addChild: (cells at: row at: column) ].
 
 	container openInNewSpace
 ]
 
 { #category : #initialization }
-GOLGameBloc >> initElements [
+GOLGameBloc >> initCells [
 
-	elementList := Array2D
+	cells := Array2D
 		               rows: rows
 		               columns: columns
 		               tabulate: [ :i :j |
@@ -79,19 +78,20 @@ GOLGameBloc >> rows: rowNumber columns: columnNumber pattern: aGamePattern [
 
 	rows := rowNumber.
 	columns := columnNumber.
-	cells := GOLModel
+	model := GOLModel
 		         rows: rowNumber
 		         columns: columnNumber
 		         pattern: aGamePattern.
-	self initDisplay.
+	self initCells.
+	self display.
 	^ self
 ]
 
 { #category : #'update cycle' }
-GOLGameBloc >> updateElements [
+GOLGameBloc >> updateCells [
 
-	elementList withIndicesDo: [ :elt :row :column |
-		elt background: ((cells isAliveAt: row at: column)
+	cells withIndicesDo: [ :elt :row :column |
+		elt background: ((model isAliveAt: row at: column)
 				 ifTrue: [ Color black ]
 				 ifFalse: [ Color white ]) ]
 ]
