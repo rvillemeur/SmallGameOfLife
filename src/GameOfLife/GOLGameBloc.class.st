@@ -1,6 +1,6 @@
 Class {
 	#name : #GOLGameBloc,
-	#superclass : #BlElement,
+	#superclass : #Object,
 	#instVars : [
 		'cells',
 		'rows',
@@ -15,53 +15,62 @@ GOLGameBloc class >> rows: rowNumber columns: columnNumber pattern: aGamePattern
 ]
 
 { #category : #initialization }
-GOLGameBloc >> initGraphics [
+GOLGameBloc >> animation: anElementList [
 
-	| grid animation |
-	grid := Array2D rows: rows columns: columns tabulate: [ :i :j |
-		        BlElement new
-			        background: Color white;
-			        border: (BlBorder paint: Color black width: 1);
-			        constraintsDo: [ :c |
-				        c horizontal matchParent.
-				        c vertical matchParent ] ].
+	|  animation |
+
 
 	animation := BlNumberTransition new
 		             from: 0;
 		             to: 1;
-		             by: 0.7;
+		             by: 0.5;
 		             beInfinite;
 		             duration: 0.5 seconds;
 		             onStepDo: [ :aValue :anElement |
-			             aValue > 0.5 ifTrue: [ cells getNextGeneration ].
-
 			             1 to: rows do: [ :row |
 					             1 to: columns do: [ :column |
-							             (grid at: row at: column) background:
+							             (anElementList  at: row at: column) background:
 									             ((cells isAliveAt: row at: column)
 										              ifTrue: [ Color black ]
 										              ifFalse: [ Color white ]) ] ] ].
 
-	self layout: (BlGridLayout new
-			 rowCount: rows;
-			 columnCount: columns).
-
-	1 to: rows do: [ :row |
-		1 to: columns do: [ :column |
-		self addChild: (grid at: row at: column) ] ].
-
-	self addAnimation: animation
+	animation addEventHandler: (BlEventHandler
+			 on: BlAnimationLoopDoneEvent
+			 do: [ :anEvent | cells getNextGeneration ]).
+			
+		^animation
 ]
 
 { #category : #initialization }
-GOLGameBloc >> initialize [
+GOLGameBloc >> initDisplay [
 
-	super initialize.
-	self constraintsDo: [ :c |
-		c horizontal matchParent.
-		c vertical matchParent ].
-	self border: (BlBorder paint: Color black width: 3).
-	self openInNewSpace
+	| elementList container |
+	elementList := Array2D
+		               rows: rows
+		               columns: columns
+		               tabulate: [ :i :j |
+			               BlElement new
+				               background: Color white;
+				               border: (BlBorder paint: Color black width: 1);
+				               constraintsDo: [ :c |
+					               c horizontal matchParent.
+					               c vertical matchParent ] ].
+
+	container := BlElement new
+		             constraintsDo: [ :c |
+			             c horizontal matchParent.
+			             c vertical matchParent ];
+		             border: (BlBorder paint: Color black width: 3);
+		             layout: (BlGridLayout new
+				              rowCount: rows;
+				              columnCount: columns);
+		             addAnimation: (self animation: elementList).
+
+	1 to: rows do: [ :row |
+		1 to: columns do: [ :column |
+		container addChild: (elementList at: row at: column) ] ].
+
+	container openInNewSpace
 ]
 
 { #category : #'instance creation' }
@@ -73,6 +82,6 @@ GOLGameBloc >> rows: rowNumber columns: columnNumber pattern: aGamePattern [
 		         rows: rowNumber
 		         columns: columnNumber
 		         pattern: aGamePattern.
-	self initGraphics.
+	self initDisplay.
 	^ self
 ]

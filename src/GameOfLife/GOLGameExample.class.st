@@ -19,6 +19,15 @@ GOLGameExample class >> blinker [
 ]
 
 { #category : #examples }
+GOLGameExample class >> blinkerBloc [
+	<example>
+	| game |
+	game := GOLGameBloc rows: 3 columns: 3 pattern: #( false true false
+																  false true false
+																  false true false  ).
+]
+
+{ #category : #examples }
 GOLGameExample class >> pentathlon [
 
 	<example>
