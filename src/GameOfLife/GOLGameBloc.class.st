@@ -51,11 +51,10 @@ GOLGameBloc >> initDisplay [
 		             layout: (BlGridLayout new
 				              rowCount: rows;
 				              columnCount: columns);
-		             addAnimation: (self animation).
+		             addAnimation: self animation.
 
-	1 to: rows do: [ :row |
-		1 to: columns do: [ :column |
-		container addChild: (elementList at: row at: column) ] ].
+	elementList indicesDo: [ :row :column |
+		container addChild: (elementList at: row at: column) ].
 
 	container openInNewSpace
 ]
@@ -91,10 +90,8 @@ GOLGameBloc >> rows: rowNumber columns: columnNumber pattern: aGamePattern [
 { #category : #'update cycle' }
 GOLGameBloc >> updateElements [
 
-	1 to: rows do: [ :row |
-		1 to: columns do: [ :column |
-			(elementList at: row at: column) background:
-				((cells isAliveAt: row at: column)
-					 ifTrue: [ Color black ]
-					 ifFalse: [ Color white ]) ] ]
+	elementList withIndicesDo: [ :elt :row :column |
+		elt background: ((cells isAliveAt: row at: column)
+				 ifTrue: [ Color black ]
+				 ifFalse: [ Color white ]) ]
 ]
