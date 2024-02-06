@@ -25,16 +25,6 @@ GOLModel class >> rows: rowNumber columns: columnNumber pattern: aGamePattern [
 	^self new rows: rowNumber columns: columnNumber pattern: aGamePattern 
 ]
 
-{ #category : #accessing }
-GOLModel >> game [
-	^ game
-]
-
-{ #category : #accessing }
-GOLModel >> game: anArray [
-	game := anArray
-]
-
 { #category : #private }
 GOLModel >> getCellValueAt: i at: j [
 	"Gets the value of the specified cell"
@@ -93,9 +83,4 @@ GOLModel >> rows: rowNumber columns: columnNumber pattern: aGamePattern [
 		rows: rowNumber
 		columns: columnNumber
 		contents: aGamePattern
-]
-
-{ #category : #'model protocol' }
-GOLModel >> turnAliveAt: i at: j [ 
-	game at: i at:j put: true.
 ]
