@@ -1,10 +1,15 @@
+"
+Game of life display using Bloc graphical stack
+Look at example to launch specific game of life pattern
+"
 Class {
 	#name : #GOLGameBloc,
 	#superclass : #Object,
 	#instVars : [
 		'cells',
 		'rows',
-		'columns'
+		'columns',
+		'elementList'
 	],
 	#category : #'GameOfLife-UI'
 }
@@ -15,46 +20,28 @@ GOLGameBloc class >> rows: rowNumber columns: columnNumber pattern: aGamePattern
 ]
 
 { #category : #initialization }
-GOLGameBloc >> animation: anElementList [
+GOLGameBloc >> animation [
 
-	|  animation |
-
-
-	animation := BlNumberTransition new
+	| animation |
+	animation := BlTransition new
 		             from: 0;
 		             to: 1;
-		             by: 0.5;
 		             beInfinite;
-		             duration: 0.5 seconds;
-		             onStepDo: [ :aValue :anElement |
-			             1 to: rows do: [ :row |
-					             1 to: columns do: [ :column |
-							             (anElementList  at: row at: column) background:
-									             ((cells isAliveAt: row at: column)
-										              ifTrue: [ Color black ]
-										              ifFalse: [ Color white ]) ] ] ].
+		             duration: 0.6 seconds;
+		             onStepDo: [ :aValue :anElement | self updateElements ].
 
 	animation addEventHandler: (BlEventHandler
 			 on: BlAnimationLoopDoneEvent
 			 do: [ :anEvent | cells getNextGeneration ]).
-			
-		^animation
+
+	^ animation
 ]
 
 { #category : #initialization }
 GOLGameBloc >> initDisplay [
 
-	| elementList container |
-	elementList := Array2D
-		               rows: rows
-		               columns: columns
-		               tabulate: [ :i :j |
-			               BlElement new
-				               background: Color white;
-				               border: (BlBorder paint: Color black width: 1);
-				               constraintsDo: [ :c |
-					               c horizontal matchParent.
-					               c vertical matchParent ] ].
+	| container |
+	self initElements.
 
 	container := BlElement new
 		             constraintsDo: [ :c |
@@ -64,13 +51,28 @@ GOLGameBloc >> initDisplay [
 		             layout: (BlGridLayout new
 				              rowCount: rows;
 				              columnCount: columns);
-		             addAnimation: (self animation: elementList).
+		             addAnimation: (self animation).
 
 	1 to: rows do: [ :row |
 		1 to: columns do: [ :column |
 		container addChild: (elementList at: row at: column) ] ].
 
 	container openInNewSpace
+]
+
+{ #category : #initialization }
+GOLGameBloc >> initElements [
+
+	elementList := Array2D
+		               rows: rows
+		               columns: columns
+		               tabulate: [ :i :j |
+			               BlElement new
+				               background: Color white;
+				               border: (BlBorder paint: Color black width: 1);
+				               constraintsDo: [ :c |
+					               c horizontal matchParent.
+					               c vertical matchParent ] ]
 ]
 
 { #category : #'instance creation' }
@@ -84,4 +86,15 @@ GOLGameBloc >> rows: rowNumber columns: columnNumber pattern: aGamePattern [
 		         pattern: aGamePattern.
 	self initDisplay.
 	^ self
+]
+
+{ #category : #'update cycle' }
+GOLGameBloc >> updateElements [
+
+	1 to: rows do: [ :row |
+		1 to: columns do: [ :column |
+			(elementList at: row at: column) background:
+				((cells isAliveAt: row at: column)
+					 ifTrue: [ Color black ]
+					 ifFalse: [ Color white ]) ] ]
 ]
