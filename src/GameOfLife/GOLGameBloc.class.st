@@ -4,7 +4,7 @@ Look at example to launch specific game of life pattern
 "
 Class {
 	#name : #GOLGameBloc,
-	#superclass : #Object,
+	#superclass : #BlElement,
 	#instVars : [
 		'rows',
 		'columns',
@@ -23,39 +23,15 @@ GOLGameBloc class >> rows: rowNumber columns: columnNumber pattern: aGamePattern
 GOLGameBloc >> animation [
 
 	| animation |
-	animation := BlTransition new
-		             from: 0;
-		             to: 1;
+	animation := BlAnimation new
 		             beInfinite;
-		             duration: 0.6 seconds;
-		             onStepDo: [ :aValue :anElement | self updateCells ].
+		             duration: 0.6 seconds.
 
 	animation addEventHandler: (BlEventHandler
 			 on: BlAnimationLoopDoneEvent
-			 do: [ :anEvent | model getNextGeneration ]).
+			 do: [ :anEvent | model getNextGeneration. self updateCells ]).
 
 	^ animation
-]
-
-{ #category : #initialization }
-GOLGameBloc >> display [
-
-	| container |
-
-	container := BlElement new
-		             constraintsDo: [ :c |
-			             c horizontal matchParent.
-			             c vertical matchParent ];
-		             border: (BlBorder paint: Color black width: 3);
-		             layout: (BlGridLayout new
-				              rowCount: rows;
-				              columnCount: columns);
-		             addAnimation: self animation.
-
-	cells indicesDo: [ :row :column |
-		container addChild: (cells at: row at: column) ].
-
-	container openInNewSpace
 ]
 
 { #category : #initialization }
@@ -73,6 +49,23 @@ GOLGameBloc >> initCells [
 					               c vertical matchParent ] ]
 ]
 
+{ #category : #initialization }
+GOLGameBloc >> initDisplay [
+
+	self
+		constraintsDo: [ :c |
+			c horizontal matchParent.
+			c vertical matchParent ];
+		border: (BlBorder paint: Color black width: 3);
+		layout: (BlGridLayout new
+				 rowCount: rows;
+				 columnCount: columns);
+		addAnimation: self animation.
+
+	cells indicesDo: [ :row :column |
+		self addChild: (cells at: row at: column) ]
+]
+
 { #category : #'instance creation' }
 GOLGameBloc >> rows: rowNumber columns: columnNumber pattern: aGamePattern [
 
@@ -83,7 +76,8 @@ GOLGameBloc >> rows: rowNumber columns: columnNumber pattern: aGamePattern [
 		         columns: columnNumber
 		         pattern: aGamePattern.
 	self initCells.
-	self display.
+	self initDisplay.
+	self openInNewSpace.
 	^ self
 ]
 
