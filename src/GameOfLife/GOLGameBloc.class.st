@@ -48,9 +48,9 @@ GOLGameBloc >> buildCellElement [
 ]
 
 { #category : 'accessing' }
-GOLGameBloc >> cellColorAt: row at: column [
+GOLGameBloc >> cellColorAtX: column atY: row [
 
-	^ (model isAliveAtX: row atY: column)
+	^ (model isAliveAtX: column atY: row)
 		  ifTrue: [ Color black ]
 		  ifFalse: [ Color white ]
 ]
@@ -66,9 +66,9 @@ GOLGameBloc >> displayNextGeneration [
 GOLGameBloc >> initCells [
 
 	cells := CTArray2D 
-		         width: rows
-		         height: columns
-		         tabulate: [ :i :j | self buildCellElement ]
+		         width: columns
+		         height: rows
+		         tabulate: [ :row :col | self buildCellElement ]
 ]
 
 { #category : 'initialization' }
@@ -79,13 +79,13 @@ GOLGameBloc >> initDisplay [
 			c horizontal matchParent.
 			c vertical matchParent ];
 		border: (BlBorder paint: Color black width: 3);
-		layout: (BlGridLayout new
+		layout: (BlGridLayout vertical
 				 rowCount: rows;
 				 columnCount: columns);
-		addAnimation: self animation.
+	addAnimation: self animation.
 
 	cells rowsAndColumnsDo: [ :row :column |
-		self addChild: (cells atX: row atY: column) ]
+		self addChild: (cells atX: column atY: row) ]
 ]
 
 { #category : 'instance creation' }
@@ -107,5 +107,5 @@ GOLGameBloc >> rows: rowNumber columns: columnNumber pattern: aGamePattern [
 GOLGameBloc >> updateCells [
 
 	cells rowAndColumnValuesDo: [ :row :column :elt |
-		elt background: (self cellColorAt: row at: column) ]
+		elt background: (self cellColorAtX: column atY: row) ]
 ]

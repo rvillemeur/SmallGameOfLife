@@ -59,7 +59,7 @@ GOLModel >> getNeighborsAtX: col atY: row [
 GOLModel >> getNextGeneration [
 
 	nextGeneration := CTArray2D width: game width height: game height.
-	nextGeneration rowsAndColumnsPut: [ :col :row |
+	nextGeneration rowsAndColumnsPut: [ :row :col |
 		self getNextGenerationAtX: col atY: row ].
 	game := nextGeneration
 ]
