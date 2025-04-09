@@ -3,23 +3,25 @@ Game of life display using Bloc graphical stack
 Look at example to launch specific game of life pattern
 "
 Class {
-	#name : #GOLGameBloc,
-	#superclass : #BlElement,
+	#name : 'GOLGameBloc',
+	#superclass : 'BlElement',
 	#instVars : [
 		'rows',
 		'columns',
 		'model',
 		'cells'
 	],
-	#category : #'GameOfLife-UI'
+	#category : 'GameOfLife-UI',
+	#package : 'GameOfLife',
+	#tag : 'UI'
 }
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 GOLGameBloc class >> rows: rowNumber columns: columnNumber pattern: aGamePattern [
 	^self new rows: rowNumber columns: columnNumber pattern: aGamePattern.
 ]
 
-{ #category : #initialization }
+{ #category : 'initialization' }
 GOLGameBloc >> animation [
 
 	| animation |
@@ -29,27 +31,47 @@ GOLGameBloc >> animation [
 
 	animation addEventHandler: (BlEventHandler
 			 on: BlAnimationLoopDoneEvent
-			 do: [ :anEvent | model getNextGeneration. self updateCells ]).
+			 do: [ :anEvent | self displayNextGeneration ]).
 
 	^ animation
 ]
 
-{ #category : #initialization }
-GOLGameBloc >> initCells [
+{ #category : 'initialization' }
+GOLGameBloc >> buildCellElement [
 
-	cells := Array2D
-		               rows: rows
-		               columns: columns
-		               tabulate: [ :i :j |
-			               BlElement new
-				               background: Color white;
-				               border: (BlBorder paint: Color black width: 1);
-				               constraintsDo: [ :c |
-					               c horizontal matchParent.
-					               c vertical matchParent ] ]
+	^ BlElement new
+		  background: Color white;
+		  border: (BlBorder paint: Color black width: 1);
+		  constraintsDo: [ :c |
+			  c horizontal matchParent.
+			  c vertical matchParent ]
 ]
 
-{ #category : #initialization }
+{ #category : 'accessing' }
+GOLGameBloc >> cellColorAt: row at: column [
+
+	^ (model isAliveAtX: row atY: column)
+		  ifTrue: [ Color black ]
+		  ifFalse: [ Color white ]
+]
+
+{ #category : 'update cycle' }
+GOLGameBloc >> displayNextGeneration [
+
+	model getNextGeneration.
+	self updateCells
+]
+
+{ #category : 'initialization' }
+GOLGameBloc >> initCells [
+
+	cells := CTArray2D 
+		         width: rows
+		         height: columns
+		         tabulate: [ :i :j | self buildCellElement ]
+]
+
+{ #category : 'initialization' }
 GOLGameBloc >> initDisplay [
 
 	self
@@ -62,11 +84,11 @@ GOLGameBloc >> initDisplay [
 				 columnCount: columns);
 		addAnimation: self animation.
 
-	cells indicesDo: [ :row :column |
-		self addChild: (cells at: row at: column) ]
+	cells rowsAndColumnsDo: [ :row :column |
+		self addChild: (cells atX: row atY: column) ]
 ]
 
-{ #category : #'instance creation' }
+{ #category : 'instance creation' }
 GOLGameBloc >> rows: rowNumber columns: columnNumber pattern: aGamePattern [
 
 	rows := rowNumber.
@@ -81,11 +103,9 @@ GOLGameBloc >> rows: rowNumber columns: columnNumber pattern: aGamePattern [
 	^ self
 ]
 
-{ #category : #'update cycle' }
+{ #category : 'update cycle' }
 GOLGameBloc >> updateCells [
 
-	cells withIndicesDo: [ :elt :row :column |
-		elt background: ((model isAliveAt: row at: column)
-				 ifTrue: [ Color black ]
-				 ifFalse: [ Color white ]) ]
+	cells rowAndColumnValuesDo: [ :row :column :elt |
+		elt background: (self cellColorAt: row at: column) ]
 ]

@@ -1,1 +1,1 @@
-Package { #name : #BaselineOfSmallGameOfLife }
+Package { #name : 'BaselineOfSmallGameOfLife' }
