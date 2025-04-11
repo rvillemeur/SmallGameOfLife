@@ -29,18 +29,7 @@ GOLModel class >> rows: rowNumber columns: columnNumber pattern: aGamePattern [
 ]
 
 { #category : 'private' }
-GOLModel >> getCellValueAtX: col atY: row [
-	"Gets the value of the specified cell. If the cell is out of bound, return 1"
-
-	| alive |
-	alive := 0.
-	col < 1 | (row > game numberOfRows) | (col > game numberOfColumns) | (row < 1)
-		ifFalse: [ (game atX: col atY: row) ifTrue: [ alive := 1 ] ].
-	^ alive
-]
-
-{ #category : 'private' }
-GOLModel >> getNeighborsAtX: col atY: row [
+GOLModel >> countNeighborsAtX: col atY: row [
 
 	| topLeft top topRight left right bottomLeft bottomRight bottom |
 	topLeft := self getCellValueAtX: col - 1 atY: row - 1.
@@ -55,6 +44,17 @@ GOLModel >> getNeighborsAtX: col atY: row [
 	  + bottomLeft
 ]
 
+{ #category : 'private' }
+GOLModel >> getCellValueAtX: col atY: row [
+	"Gets the value of the specified cell. If the cell is out of bound, return 1"
+
+	| alive |
+	alive := 0.
+	(self insideBounds: col @ row) ifFalse: [
+		(game atX: col atY: row) ifTrue: [ alive := 1 ] ].
+	^ alive
+]
+
 { #category : 'model protocol' }
 GOLModel >> getNextGeneration [
 
@@ -67,8 +67,7 @@ GOLModel >> getNextGeneration [
 { #category : 'model protocol' }
 GOLModel >> getNextGenerationAtX: col atY: row [
 	| neighbors cell |
-	"self haltIf: [ col = 2 and: [row = 2]]."
-	neighbors := self getNeighborsAtX: col atY: row.
+	neighbors := self countNeighborsAtX: col atY: row.
 	cell := game atX: col atY: row.
 	cell ifTrue: [ neighbors < 2 | (neighbors > 3)
 				ifTrue: [ ^ false ]
@@ -76,6 +75,13 @@ GOLModel >> getNextGenerationAtX: col atY: row [
 		ifFalse: [ neighbors = 3
 				ifTrue: [ ^ true ] ].
 	^ false
+]
+
+{ #category : 'private' }
+GOLModel >> insideBounds: aPoint [
+
+	^ aPoint x < 1 | (aPoint y > game numberOfRows)
+	  | (aPoint x > game numberOfColumns) | (aPoint y < 1)
 ]
 
 { #category : 'model protocol' }

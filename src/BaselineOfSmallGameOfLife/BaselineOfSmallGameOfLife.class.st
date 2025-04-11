@@ -12,9 +12,12 @@ BaselineOfSmallGameOfLife >> baseline: spec [
 	spec for: #common do: [
 		spec
 			package: 'GameOfLife'
-			with: [ spec requires: #( 'ContainersArray2D' ) ].
+			with: [ spec requires: #( 'ContainersArray2D' 'Bloc' ) ].
 		spec
 			baseline: 'ContainersArray2D'
 			with: [
-			spec repository: 'github://pharo-containers/Containers-Array2D/src' ] ]
+			spec repository: 'github://pharo-containers/Containers-Array2D/src' ].
+		spec
+			baseline: 'Bloc'
+			with: [ spec repository: 'github://pharo-graphics/Bloc:dev/src' ] ]
 ]

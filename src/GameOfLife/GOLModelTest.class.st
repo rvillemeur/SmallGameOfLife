@@ -48,9 +48,8 @@ GOLModelTest >> testOverPopulation [
 { #category : 'tests' }
 GOLModelTest >> testPatternBlinker [
 	| model|
-	model := GOLModel rows: 3 columns: 3 pattern: #( false true false
-																  false true false
-																  false true false  ).
+	model := GOLModel rows: 3 columns: 3 pattern: GOLGameExample blinkerPattern .
+	
 	model getNextGeneration.
 	self assert: (model isAliveAtX: 1 atY:1) equals: false.
 	self assert: (model isAliveAtX: 2 atY:1) equals: false.
